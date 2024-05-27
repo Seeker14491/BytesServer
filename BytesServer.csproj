@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net35</TargetFramework>
     <AssemblyName>BytesServer</AssemblyName>
-    <Description>My first plugin</Description>
+    <Description>A BepInEx mod for Distance that turns the game into an HTTP server that provides endpoints for converting between the game's .bytes format and XML.</Description>
     <Version>1.0.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
