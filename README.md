@@ -12,9 +12,8 @@ No prebuilt plugin files are provided. You'll need an up-to-date version of the 
 2. Install BepInEx 5.
 3. Launch the game briefly by running `Distance.exe` so BepInEx generates its folder structure and config files.
 4. Enable the BepInEx console by editing `BepInEx\config\BepInEx.cfg`, and under `[Logging.Console]`, setting `Enabled = true`.
-5. (recommended) Replace `Distance_Data\Plugins\AkSoundEngine.dll` with [this patched version](https://cdn.discordapp.com/attachments/166190176756826112/674279030119202845/AkSoundEngine.dll?ex=6654aa48&is=665358c8&hm=501996447aac9d0920cced4cd4ff809c8d3d5b9e572489e1ccb188729488f79c&). This fixes the console message spam.
-6. Install the BytesServer plugin dll to the `BepInEx\plugins` folder.
-7. Create a script to launch the game. On Windows, for example, create a `start.bat` file next to `Distance.exe` with these contents:
+5. Install the BytesServer plugin dll to the `BepInEx\plugins` folder.
+6. Create a script to launch the game. On Windows, for example, create a `start.bat` file next to `Distance.exe` with these contents:
     ```
    Distance.exe -batchmode -nographics
    ```
