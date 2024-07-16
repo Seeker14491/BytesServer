@@ -11,7 +11,7 @@ No prebuilt plugin files are provided. You'll need an up-to-date version of the 
 1. Start with a clean game install. The mod disables Steam integration, so you're free to move or copy the installation to another location.
 2. Install BepInEx 5.
 3. Launch the game briefly by running `Distance.exe` so BepInEx generates its folder structure and config files.
-4. Enable the BepInEx console by editing `BepInEx\config\BepInEx.cfg`, and under `[Logging.Console]`, setting `Enabled = true`.
+4. (optional) Enable the BepInEx console by editing `BepInEx\config\BepInEx.cfg`, and under `[Logging.Console]`, setting `Enabled = true`.
 5. Install the BytesServer plugin dll to the `BepInEx\plugins` folder.
 6. Create a script to launch the game. On Windows, for example, create a `start.bat` file next to `Distance.exe` with these contents:
     ```
@@ -21,7 +21,7 @@ No prebuilt plugin files are provided. You'll need an up-to-date version of the 
 
 ## Running
 
-You can use the script you created above to launch the game/server. A message stating the server is listening will be printed to the console when the server is ready. It is currently hardcoded to listen on port `8080`.
+You can use the script you created above to launch the game/server. A message stating the server is listening will be printed to the console when the server is ready. The server listens on port 18500 by default, but this can be changed by setting the `BYTES_SERVER_PORT` environment variable.
 
 ## HTTP Endpoints
 

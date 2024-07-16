@@ -37,10 +37,22 @@ public class BytesServer : BaseUnityPlugin
         Application.targetFrameRate = 100;
         _level = new Level(true);
 
+        var port = 0;
+        var portEnvVar = Environment.GetEnvironmentVariable("BYTES_SERVER_PORT");
+        if (portEnvVar != null)
+        {
+            int.TryParse(portEnvVar, out port);
+        }
+
+        if (port is < 1 or > 65535)
+        {
+            port = 18500;
+        }
+
         var listener = new HttpListener();
-        listener.Prefixes.Add("http://*:8080/");
+        listener.Prefixes.Add($"http://*:{port}/");
         listener.Start();
-        Console.WriteLine("BytesServer listening on port 8080.");
+        Console.WriteLine($"BytesServer listening on port {port}.");
 
         listener.BeginGetContext(ListenerCallback, listener);
         return;
