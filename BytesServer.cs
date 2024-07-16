@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Text;
 using System.Xml;
 using BepInEx;
 using HarmonyLib;
@@ -98,8 +97,7 @@ public class BytesServer : BaseUnityPlugin
                 var isLoadSuccessful = _level.LoadFromBytes(encodedLevelData, true, false);
                 if (isLoadSuccessful)
                 {
-                    var xmlLevelBytes = Encoding.Convert(Encoding.Unicode, Encoding.UTF8,
-                        Serializer.SaveLevelToBytes<XmlSerializer>(_level));
+                    var xmlLevelBytes = Serializer.SaveLevelToBytes<XmlSerializer>(_level);
                     response.ContentLength64 = xmlLevelBytes.Length;
                     response.OutputStream.Write(xmlLevelBytes, 0, xmlLevelBytes.Length);
                 }
@@ -147,8 +145,7 @@ public class BytesServer : BaseUnityPlugin
                 if (gameObject2 is not null)
                 {
                     var prefab = Resource.LoadPrefab(gameObject2.name, false);
-                    var xmlGameObjectBytes = Encoding.Convert(Encoding.Unicode, Encoding.UTF8,
-                        Serializer.SaveGameObjectToBytes<XmlSerializer>(gameObject2, prefab));
+                    var xmlGameObjectBytes = Serializer.SaveGameObjectToBytes<XmlSerializer>(gameObject2, prefab);
                     response.ContentLength64 = xmlGameObjectBytes.Length;
                     response.OutputStream.Write(xmlGameObjectBytes, 0, xmlGameObjectBytes.Length);
                 }
@@ -299,6 +296,21 @@ public class BytesServer : BaseUnityPlugin
                 }
             }
         }
+
+        return false;
+    }
+
+    [HarmonyPatch(typeof(XmlSerializer), "SetupWriterSettings")]
+    [HarmonyPrefix]
+    // ReSharper disable once InconsistentNaming
+    private static bool CustomizeXmlWriterSettings(ref XmlWriterSettings ___xmlWriterSettings_)
+    {
+        ___xmlWriterSettings_ = new XmlWriterSettings
+        {
+            OmitXmlDeclaration = true,
+            CloseOutput = true,
+            ConformanceLevel = ConformanceLevel.Auto
+        };
 
         return false;
     }
