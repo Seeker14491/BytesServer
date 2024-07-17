@@ -25,11 +25,13 @@ You can use the script you created above to launch the game/server. A message st
 
 ## HTTP Endpoints
 
-All current endpoints require making a POST request with the `.bytes` or XML data provided in the request body. The response body will consist of the converted data.
+These endpoints require making a POST request with the `.bytes` or XML data provided in the request body. The response body will consist of the converted data. The `/level-*` endpoints support conversion of level files, while the `/gameobject-*` endpoints support non-level `.bytes` file conversion (local leaderboards, replays, custom objects, profiles, `LevelInfos.bytes`).
 
-The `/level-*` endpoints support conversion of level files, while the `/gameobject-*` endpoints support non-level `.bytes` file conversion (local leaderboards, replays, custom objects, profiles, `LevelInfos.bytes`).
+- POST `/level-bytes-to-xml`
+- POST `/level-xml-to-bytes`
+- POST `/gameobject-bytes-to-xml`
+- POST `/gameobject-xml-to-bytes`
 
-- `/level-bytes-to-xml`
-- `/level-xml-to-bytes`
-- `/gameobject-bytes-to-xml`
-- `/gameobject-xml-to-bytes`
+There is a simple healthcheck endpoint that simply returns `OK`:
+
+- GET `/ping`

@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Text;
 using System.Xml;
 using BepInEx;
 using HarmonyLib;
@@ -83,16 +84,16 @@ public class BytesServer : BaseUnityPlugin
         var request = context.Request;
         using var response = context.Response;
 
-        if (request.HttpMethod != "POST")
-        {
-            response.StatusCode = (int)HttpStatusCode.MethodNotAllowed;
-            return;
-        }
-
         switch (request.Url.AbsolutePath)
         {
             case "/level-bytes-to-xml":
             {
+                if (request.HttpMethod != "POST")
+                {
+                    response.StatusCode = (int)HttpStatusCode.MethodNotAllowed;
+                    return;
+                }
+
                 var encodedLevelData = ReadBodyToArray(request);
                 var isLoadSuccessful = _level.LoadFromBytes(encodedLevelData, true, false);
                 if (isLoadSuccessful)
@@ -112,6 +113,12 @@ public class BytesServer : BaseUnityPlugin
             }
             case "/level-xml-to-bytes":
             {
+                if (request.HttpMethod != "POST")
+                {
+                    response.StatusCode = (int)HttpStatusCode.MethodNotAllowed;
+                    return;
+                }
+
                 var encodedLevelData = ReadBodyToArray(request);
                 var deserializer = new XmlDeserializer(encodedLevelData);
 
@@ -140,6 +147,12 @@ public class BytesServer : BaseUnityPlugin
             }
             case "/gameobject-bytes-to-xml":
             {
+                if (request.HttpMethod != "POST")
+                {
+                    response.StatusCode = (int)HttpStatusCode.MethodNotAllowed;
+                    return;
+                }
+
                 var encodedGameObjectData = ReadBodyToArray(request);
                 var gameObject2 = Deserializer.LoadGameObjectFromBytes<BinaryDeserializer>(encodedGameObjectData);
                 if (gameObject2 is not null)
@@ -160,6 +173,12 @@ public class BytesServer : BaseUnityPlugin
             }
             case "/gameobject-xml-to-bytes":
             {
+                if (request.HttpMethod != "POST")
+                {
+                    response.StatusCode = (int)HttpStatusCode.MethodNotAllowed;
+                    return;
+                }
+
                 var encodedGameObjectData = ReadBodyToArray(request);
                 var gameObject2 = Deserializer.LoadGameObjectFromBytes<XmlDeserializer>(encodedGameObjectData);
                 if (gameObject2 is not null)
@@ -176,6 +195,21 @@ public class BytesServer : BaseUnityPlugin
 
                 response.Close();
                 Destroy(gameObject2);
+                break;
+            }
+            case "/ping":
+            {
+                if (request.HttpMethod != "GET")
+                {
+                    response.StatusCode = (int)HttpStatusCode.MethodNotAllowed;
+                    return;
+                }
+
+                var buffer = Encoding.UTF8.GetBytes("OK");
+                response.ContentLength64 = buffer.Length;
+                response.OutputStream.Write(buffer, 0, buffer.Length);
+
+                response.Close();
                 break;
             }
             default:
