@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -12,6 +13,7 @@ using HarmonyLib;
 using JetBrains.Annotations;
 using Serializers;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace BytesServer;
 
@@ -84,6 +86,9 @@ public class BytesServer : BaseUnityPlugin
         var request = context.Request;
         using var response = context.Response;
 
+        var stopWatch = new Stopwatch();
+        stopWatch.Start();
+
         switch (request.Url.AbsolutePath)
         {
             case "/level-bytes-to-xml":
@@ -91,6 +96,7 @@ public class BytesServer : BaseUnityPlugin
                 if (request.HttpMethod != "POST")
                 {
                     response.StatusCode = (int)HttpStatusCode.MethodNotAllowed;
+                    LogRequest();
                     return;
                 }
 
@@ -116,6 +122,7 @@ public class BytesServer : BaseUnityPlugin
                 if (request.HttpMethod != "POST")
                 {
                     response.StatusCode = (int)HttpStatusCode.MethodNotAllowed;
+                    LogRequest();
                     return;
                 }
 
@@ -150,6 +157,7 @@ public class BytesServer : BaseUnityPlugin
                 if (request.HttpMethod != "POST")
                 {
                     response.StatusCode = (int)HttpStatusCode.MethodNotAllowed;
+                    LogRequest();
                     return;
                 }
 
@@ -176,6 +184,7 @@ public class BytesServer : BaseUnityPlugin
                 if (request.HttpMethod != "POST")
                 {
                     response.StatusCode = (int)HttpStatusCode.MethodNotAllowed;
+                    LogRequest();
                     return;
                 }
 
@@ -202,6 +211,7 @@ public class BytesServer : BaseUnityPlugin
                 if (request.HttpMethod != "GET")
                 {
                     response.StatusCode = (int)HttpStatusCode.MethodNotAllowed;
+                    LogRequest();
                     return;
                 }
 
@@ -217,6 +227,8 @@ public class BytesServer : BaseUnityPlugin
                 break;
         }
 
+        LogRequest();
+
         return;
 
         static byte[] ReadBodyToArray(HttpListenerRequest request)
@@ -231,6 +243,13 @@ public class BytesServer : BaseUnityPlugin
             }
 
             return memoryStream.ToArray();
+        }
+
+        void LogRequest()
+        {
+            stopWatch.Stop();
+            Console.WriteLine(
+                $"{response.StatusCode} {request.HttpMethod} {request.Url.AbsolutePath} - Request body size: {request.ContentLength64} - Execution: {stopWatch.ElapsedMilliseconds} ms");
         }
     }
 
