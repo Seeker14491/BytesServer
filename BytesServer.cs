@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -130,9 +129,7 @@ public class BytesServer : BaseUnityPlugin
                 var deserializer = new XmlDeserializer(encodedLevelData);
 
                 var loadState = new Level.LoadState();
-                var enumerator = Traverse.Create(_level)
-                    .Method("LoadHelperEnumerator", deserializer, true, false, loadState)
-                    .GetValue<IEnumerator>();
+                var enumerator = _level.LoadHelperEnumerator(deserializer, true, false, loadState);
                 while (enumerator.MoveNext())
                 {
                 }
@@ -294,9 +291,9 @@ public class BytesServer : BaseUnityPlugin
 
         [UsedImplicitly]
         // ReSharper disable once InconsistentNaming
-        private static bool Prefix(XmlReader ___reader_, ref uint val)
+        private static bool Prefix(XmlDeserializer __instance, ref uint val)
         {
-            val = (uint)(long)___reader_.ReadElementContentAs(typeof(long), null);
+            val = (uint)(long)__instance.reader_.ReadElementContentAs(typeof(long), null);
             return false;
         }
     }
@@ -319,12 +316,12 @@ public class BytesServer : BaseUnityPlugin
         Transform prefabParent)
     {
         if (!__instance.ReadToStartScope("Children")) return false;
-        while (Traverse.Create(__instance).Method("Read", "GameObject", "Children").GetValue<bool>())
+        while (__instance.Read("GameObject", "Children"))
         {
             if (prefabParent == null || prefabParent.tag == "PrefabContainer")
             {
                 // This is the only behavioral change we make in this method: pass in `parent` instead of `null`.
-                Traverse.Create(__instance).Method("VisitGameObject", parent).GetValue<GameObject>();
+                __instance.VisitGameObject(parent);
             }
             else
             {
@@ -333,10 +330,9 @@ public class BytesServer : BaseUnityPlugin
                 if (transform != null)
                 {
                     var transform2 = prefabParent.FindChild(attribute);
-                    var num = Traverse.Create(__instance).Method("ReadGUID").GetValue<uint>();
-                    Traverse.Create(__instance).Method("AddObjectToReferences", transform.gameObject, num).GetValue();
-                    Traverse.Create(__instance)
-                        .Method("VisitChildContents", transform.gameObject, transform2.gameObject).GetValue();
+                    var num = __instance.ReadGUID();
+                    __instance.AddObjectToReferences(transform.gameObject, num);
+                    __instance.VisitChildContents(transform.gameObject, transform2.gameObject);
                 }
                 else
                 {
@@ -345,7 +341,7 @@ public class BytesServer : BaseUnityPlugin
                         "When XML serializing in a GameObject, the child with name ", attribute,
                         " of parent with name ", parent.name, " wasn't found, was it renamed?"
                     }));
-                    Traverse.Create(__instance).Method("LoopReadToEndScopeWithDepth", "GameObject").GetValue();
+                    __instance.LoopReadToEndScopeWithDepth("GameObject");
                 }
             }
         }
@@ -356,9 +352,9 @@ public class BytesServer : BaseUnityPlugin
     [HarmonyPatch(typeof(XmlSerializer), "SetupWriterSettings")]
     [HarmonyPrefix]
     // ReSharper disable once InconsistentNaming
-    private static bool CustomizeXmlWriterSettings(ref XmlWriterSettings ___xmlWriterSettings_)
+    private static bool CustomizeXmlWriterSettings(XmlSerializer __instance)
     {
-        ___xmlWriterSettings_ = new XmlWriterSettings
+        __instance.xmlWriterSettings_ = new XmlWriterSettings
         {
             OmitXmlDeclaration = true,
             CloseOutput = true,

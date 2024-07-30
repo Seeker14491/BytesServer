@@ -4,7 +4,7 @@ A BepInEx mod for [Distance](https://survivethedistance.com/) that turns the gam
 
 ## Building
 
-No prebuilt plugin files are provided. You'll need an up-to-date version of the .NET SDK to build the plugin. Copy the game's `Assembly-CSharp.dll` file to the `lib` folder before building.
+No prebuilt plugin files are provided. You'll need an up-to-date version of the .NET SDK to build the plugin.
 
 ## Installation
 
