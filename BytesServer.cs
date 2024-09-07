@@ -83,7 +83,7 @@ public class BytesServer : BaseUnityPlugin
         var listener = (HttpListener)result.AsyncState;
         var context = listener.EndGetContext(result);
         var request = context.Request;
-        using var response = context.Response;
+        var response = context.Response;
 
         var stopWatch = new Stopwatch();
         stopWatch.Start();
@@ -215,8 +215,6 @@ public class BytesServer : BaseUnityPlugin
                 var buffer = Encoding.UTF8.GetBytes("OK");
                 response.ContentLength64 = buffer.Length;
                 response.OutputStream.Write(buffer, 0, buffer.Length);
-
-                response.Close();
                 break;
             }
             default:
@@ -225,6 +223,7 @@ public class BytesServer : BaseUnityPlugin
         }
 
         LogRequest();
+        response.Close();
 
         return;
 
