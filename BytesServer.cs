@@ -114,6 +114,7 @@ public class BytesServer : BaseUnityPlugin
 
                 response.Close();
                 _level.ClearAndReset(true);
+                Resource.UnloadUnusedAssets();
                 break;
             }
             case "/level-xml-to-bytes":
@@ -147,6 +148,7 @@ public class BytesServer : BaseUnityPlugin
 
                 response.Close();
                 _level.ClearAndReset(true);
+                Resource.UnloadUnusedAssets();
                 break;
             }
             case "/gameobject-bytes-to-xml":
@@ -174,6 +176,7 @@ public class BytesServer : BaseUnityPlugin
 
                 response.Close();
                 Destroy(gameObject2);
+                Resource.UnloadUnusedAssets();
                 break;
             }
             case "/gameobject-xml-to-bytes":
@@ -201,6 +204,7 @@ public class BytesServer : BaseUnityPlugin
 
                 response.Close();
                 Destroy(gameObject2);
+                Resource.UnloadUnusedAssets();
                 break;
             }
             case "/ping":
